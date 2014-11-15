@@ -38,7 +38,7 @@ def long_description():
     with codecs.open('README.md', encoding='utf8') as f:
         return f.read()
 
-setup(name='mystartspilot',
+setup(name='mystarspilot',
     version=mystarspilot.__version__,
     description="a CLI tool to search your starred Github repositories.",
     long_description=long_description(),
