@@ -8,6 +8,7 @@ import mystarspilot
 install_requires = [
     'github3.py==0.9.3',
     'kyotocabinet>=1.9',
+    'colorama>=0.2.4',
 ]
 
 ### Conditional dependencies:
@@ -22,7 +23,7 @@ if not 'bdist_wheel' in sys.argv:
 
     if 'win32' in str(sys.platform).lower():
         # Terminal colors for Windows
-        install_requires.append('colorama>=0.2.4', 'pyreadline')
+        install_requires.append('pyreadline')
 
 
 # bdist_wheel
@@ -31,7 +32,7 @@ extras_require = {
     ':python_version == "2.6"'
     ' or python_version == "3.0"'
     ' or python_version == "3.1" ': ['argparse>=1.2.1'],
-    ':sys_platform == "win32"': ['colorama>=0.2.4', 'pyreadline'],
+    ':sys_platform == "win32"': ['pyreadline'],
 }
 
 def long_description():
@@ -52,11 +53,11 @@ setup(name='mystarspilot',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        #'Programming Language :: Python :: 3',
-        #'Programming Language :: Python :: 3.1',
-        #'Programming Language :: Python :: 3.2',
-        #'Programming Language :: Python :: 3.3',
-        #'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.1',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Terminals',
         'Topic :: Utilities',
     ],

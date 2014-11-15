@@ -75,7 +75,7 @@ def main():
         
     count = len(search_results)
     
-    print("{}{} star{} found.".format(Fore.GREEN if count else Fore.YELLOW
+    print("{}{} star{} found.".format(Fore.GREEN if count else Fore.YELLOW,
         count if count else "No", 's' if count > 1 else '' ))
         
     print(Fore.RESET + Back.RESET + Style.RESET_ALL)
