@@ -46,9 +46,9 @@ class StarredDB(object):
         else:
             self._db.set(index_key, value_key)
             
-    def _search_index(self, domain_prefix, search, search_results):
+    def _search_index(self, domain_prefix, term, search_results):
     
-        index_key = self._generate_key(domain_prefix, search.lower())
+        index_key = self._generate_key(domain_prefix, term.lower())
         repo_keys = self._db.get_str(index_key)
 
         if repo_keys:
@@ -89,10 +89,10 @@ class StarredDB(object):
         
         keywords_results = []
         if keywords:
-            for search in keywords:
-                for word in re.compile("[_\-]").split(search):
+            for keyword in keywords:
+                for term in re.compile("[_\-]").split(keyword):
                     results = []
-                    self._search_index("idxk", word, results)
+                    self._search_index("idxk", term, results)
                     keywords_results.append(results)
         
         if languages and keywords:
