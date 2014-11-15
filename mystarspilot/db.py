@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
 from github3.repos.repo import Repository
 import kyotocabinet as kc
 import json
@@ -7,8 +10,6 @@ import re
 
 
 class StarredDB(object):
-    
-    gen_key = lambda self, domain, name: u"{}:{}".format(domain, name)
     
     def __init__(self, star_pilot_home, mode):
         self._db = kc.DB()
@@ -28,6 +29,12 @@ class StarredDB(object):
     def __exit__(self, type, value, traceback):
         self._db.close()
         
+    def _generate_key(self, domain, name):
+        try:
+            return u"{}:{}".format(domain, name)
+        except UnicodeDecodeError:
+            return u"{}:{}".format(domain, unicode(name, 'utf8'))
+        
     def _calculate_ngrams(self, word, n):
       return [ u''.join(gram) for gram in zip(*[word[i:] for i in range(n)])]
     
@@ -41,8 +48,8 @@ class StarredDB(object):
             
     def _search_index(self, domain_prefix, search, search_results):
     
-        index_key = self.gen_key(domain_prefix, search.lower())
-        repo_keys = self._db.get(index_key)
+        index_key = self._generate_key(domain_prefix, search.lower())
+        repo_keys = self._db.get_str(index_key)
 
         if repo_keys:
             for key in repo_keys.split('|'):
@@ -55,10 +62,10 @@ class StarredDB(object):
         language = repository.language
         description = repository.description
         
-        repo_key = self.gen_key("r", repository.full_name)
+        repo_key = self._generate_key("r", repository.full_name)
         
         if language:
-            lang_index_key = self.gen_key("idxl", language.lower())
+            lang_index_key = self._generate_key("idxl", language.lower())
             self._update_index(lang_index_key, repo_key)
             
         keywords = re.compile("[_\-]").split(name)
@@ -68,7 +75,7 @@ class StarredDB(object):
         for keyword in keywords:
             for n in range(2, len(keyword)+1):
                 for word in self._calculate_ngrams(keyword, n):
-                    keyword_index_key = self.gen_key("idxk", word.lower())
+                    keyword_index_key = self._generate_key("idxk", word.lower())
                     self._update_index(keyword_index_key, repo_key)
                     
         self._db.set(repo_key, json.dumps(repository.to_json()))
@@ -101,7 +108,7 @@ class StarredDB(object):
                         
             search_results = language_results + final_keywords_results
             
-        repo_results = self._db.get_bulk(search_results)
+        repo_results = self._db.get_bulk_str(search_results)
         
         if repo_results:
             return [Repository(json.loads(repo)) for repo in repo_results.values()]

@@ -6,7 +6,7 @@ import mystarspilot
 
 
 install_requires = [
-    'github.py==0.9.3',
+    'github3.py==0.9.3',
     'kyotocabinet>=1.9',
 ]
 
@@ -22,7 +22,7 @@ if not 'bdist_wheel' in sys.argv:
 
     if 'win32' in str(sys.platform).lower():
         # Terminal colors for Windows
-        install_requires.append('colorama>=0.2.4')
+        install_requires.append('colorama>=0.2.4', 'pyreadline')
 
 
 # bdist_wheel
@@ -31,7 +31,7 @@ extras_require = {
     ':python_version == "2.6"'
     ' or python_version == "3.0"'
     ' or python_version == "3.1" ': ['argparse>=1.2.1'],
-    ':sys_platform == "win32"': ['colorama>=0.2.4'],
+    ':sys_platform == "win32"': ['colorama>=0.2.4', 'pyreadline'],
 }
 
 def long_description():
@@ -69,7 +69,7 @@ setup(name='mystartspilot',
     zip_safe=False,
     entry_points = {
         'console_scripts': [
-            'mystars = mystarspilot:main',
+            'mystars = mystarspilot.__main__:main',
         ],
     },
     packages=find_packages(),
