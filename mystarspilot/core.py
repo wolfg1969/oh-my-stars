@@ -6,6 +6,7 @@ from colorama import Fore, Back, Style
 from getpass import getpass, getuser
 from github3 import login
 from .db import StarredDB
+from .view import SearchResultView
 from . import __version__
 import argparse
 import os
@@ -62,24 +63,6 @@ def main():
         sys.exit(0)
     
     with StarredDB(STAR_PILOT_HOME, mode='r') as db:
-        search_results = db.search(args.language, args.keywords)
+        search_result = db.search(args.language, args.keywords)
     
-    for repo in search_results:
-        print(Fore.GREEN + repo.full_name, 
-            Fore.YELLOW + "({})".format(repo.html_url), 
-            Fore.BLUE + "{}".format(repo.language if repo.language else '')
-        )
-        if repo.description:
-            print(Fore.RESET + Back.RESET + Style.RESET_ALL + repo.description)
-        print()
-        
-    count = len(search_results)
-    
-    print("{}{} star{} found.".format(Fore.GREEN if count else Fore.YELLOW,
-        count if count else "No", 's' if count > 1 else '' ))
-        
-    print(Fore.RESET + Back.RESET + Style.RESET_ALL)
-        
-     
-if __name__ == "__main__":
-    main()
+    SearchResultView().print_search_result(search_result, keywords)
