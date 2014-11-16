@@ -51,6 +51,6 @@ class SearchResultView(object):
             for keyword in keywords:
                 keyword = unicode(keyword, 'utf8')
                 regex = re.compile(keyword, re.I | re.U | re.M)
-                color = fore_color + Back.CYAN + Style.BRIGHT
+                color = fore_color + Back.RED + Style.BRIGHT
                 text = regex.sub(color + keyword + Back.RESET + Style.NORMAL, text)
         return text
