@@ -11,6 +11,7 @@ class SearchResultView(object):
         
         if search_result is not None:
             for repo in search_result:
+                self._print('', end='\n')
                 self.print_repo_name(repo, keywords)
                 self.print_repo_url(repo)
                 self.print_repo_language(repo)
@@ -39,7 +40,7 @@ class SearchResultView(object):
     def print_repo_description(self, repo, keywords):
         if repo.description:
             text = self._highlight_keywords(repo.description, keywords, fore_color=Fore.WHITE)
-            self._print(text, end='\n')
+            self._print(text, Fore.WHITE, end='\n')
         
     def _print(self, text='', fore_color=Fore.WHITE, end=' '):
         print(fore_color + text, end='')
@@ -48,6 +49,8 @@ class SearchResultView(object):
     def _highlight_keywords(self, text, keywords, fore_color=Fore.GREEN):
         if keywords:
             for keyword in keywords:
-                regex = re.compile(keyword, re.IGNORECASE)
-                text = regex.sub(fore_color + Style.BRIGHT + keyword + Style.NORMAL, text)
+                keyword = unicode(keyword, 'utf8')
+                regex = re.compile(keyword, re.I | re.U | re.M)
+                color = fore_color + Back.CYAN + Style.BRIGHT
+                text = regex.sub(color + keyword + Back.RESET + Style.NORMAL, text)
         return text
