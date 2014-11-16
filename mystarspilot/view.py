@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from colorama import Fore, Back, Style
+import re
 
 class SearchResultView(object):
     
@@ -9,10 +11,10 @@ class SearchResultView(object):
         
         if search_result is not None:
             for repo in search_result:
-                self.print_repo_name(repo)
+                self.print_repo_name(repo, keywords)
                 self.print_repo_url(repo)
                 self.print_repo_language(repo)
-                self.print_repo_description(repo)
+                self.print_repo_description(repo, keywords)
             
             self.print_summary(search_result)
           
@@ -23,8 +25,9 @@ class SearchResultView(object):
         text = "({} star{} found)".format(count if count else "No", 's' if count > 1 else '')
         self._print(text, fore_color, end='\n')
         
-    def print_repo_name(self, repo):
-        self._print(repo.full_name, Fore.GREEN)
+    def print_repo_name(self, repo, keywords):
+        text = self._highlight_keywords(repo.full_name, keywords)
+        self._print(text, Fore.GREEN)
         
     def print_repo_url(self, repo):
         self._print("[{}]".format(repo.html_url), Fore.YELLOW)
@@ -33,10 +36,18 @@ class SearchResultView(object):
         if repo.language:
             self._print(repo.language, Fore.BLUE, end='\n')
             
-    def print_repo_description(self, repo):
+    def print_repo_description(self, repo, keywords):
         if repo.description:
-            self._print(repo.description, end='\n')
+            text = self._highlight_keywords(repo.description, keywords, fore_color=Fore.WHITE)
+            self._print(text, end='\n')
         
-    def _print(self, text='', fore_color=Fore.RESET, end=' '):
+    def _print(self, text='', fore_color=Fore.WHITE, end=' '):
         print(fore_color + text, end='')
         print(Fore.RESET + Back.RESET + Style.RESET_ALL, end=end)
+        
+    def _highlight_keywords(self, text, keywords, fore_color=Fore.GREEN):
+        if keywords:
+            for keyword in keywords:
+                regex = re.compile(keyword, re.IGNORECASE)
+                text = regex.sub(fore_color + Style.BRIGHT + keyword + Style.NORMAL, text)
+        return text

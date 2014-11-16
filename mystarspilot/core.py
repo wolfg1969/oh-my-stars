@@ -65,4 +65,4 @@ def main():
     with StarredDB(STAR_PILOT_HOME, mode='r') as db:
         search_result = db.search(args.language, args.keywords)
     
-    SearchResultView().print_search_result(search_result, keywords)
+    SearchResultView().print_search_result(search_result, args.keywords)
