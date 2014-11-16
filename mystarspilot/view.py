@@ -23,7 +23,10 @@ class SearchResultView(object):
         self._print('', end='\n')
         count = len(search_result)
         fore_color = Fore.GREEN if count else Fore.YELLOW
-        text = "({} star{} found)".format(count if count else "No", 's' if count > 1 else '')
+        
+        text = "({} star{} found)".format(
+            count if count else "No", 's' if count > 1 else '')
+            
         self._print(text, fore_color, end='\n')
         
     def print_repo_name(self, repo, keywords):
@@ -39,7 +42,8 @@ class SearchResultView(object):
             
     def print_repo_description(self, repo, keywords):
         if repo.description:
-            text = self._highlight_keywords(repo.description, keywords, fore_color=Fore.WHITE)
+            text = self._highlight_keywords(
+                repo.description, keywords, fore_color=Fore.WHITE)
             self._print(text, Fore.WHITE, end='\n')
         
     def _print(self, text='', fore_color=Fore.WHITE, end=' '):
@@ -52,5 +56,6 @@ class SearchResultView(object):
                 keyword = unicode(keyword, 'utf8')
                 regex = re.compile(keyword, re.I | re.U | re.M)
                 color = fore_color + Back.RED + Style.BRIGHT
-                text = regex.sub(color + keyword + Back.RESET + Style.NORMAL, text)
+                text = regex.sub(
+                    color + keyword + Back.RESET + Style.NORMAL, text)
         return text

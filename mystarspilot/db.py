@@ -13,7 +13,8 @@ class StarredDB(object):
     
     def __init__(self, star_pilot_home, mode):
         self._db = kc.DB()
-        self._db_file = os.path.join(star_pilot_home, "starpilot.kch#opts=sc#zcomp=gz")
+        self._db_file = os.path.join(
+            star_pilot_home, "starpilot.kch#opts=sc#zcomp=gz")
         if mode == 'r':
             self._mode = kc.DB.OREADER
         elif mode == 'w':
@@ -96,10 +97,14 @@ class StarredDB(object):
                     keywords_results.append(results)
         
         if languages and keywords:
-            search_results = list(set(language_results).intersection(*keywords_results))  # python > 2.6
+            # python > 2.6
+            search_results = list(set(
+                language_results).intersection(*keywords_results))  
         else:
             if len(keywords_results) > 1:
-                final_keywords_results = list(set(keywords_results[0]).intersection(*keywords_results[1:]))  # python > 2.6
+                # python > 2.6
+                final_keywords_results = list(set(
+                    keywords_results[0]).intersection(*keywords_results[1:]))  
             else:
                 final_keywords_results = []
                 for results in keywords_results:

@@ -24,12 +24,17 @@ def main():
     if not os.path.exists(STAR_PILOT_HOME):
         os.makedirs(STAR_PILOT_HOME)
     
-    parser = argparse.ArgumentParser(description="a CLI tool to search your starred Github repositories.")
+    parser = argparse.ArgumentParser(
+        description="a CLI tool to search your starred Github repositories.")
     parser.add_argument("keywords", nargs='*', help="search keywords")
-    parser.add_argument("-l", "--language", help="filter by language", nargs='+')
-    parser.add_argument("-u", "--update", action="store_true", help="create(first time) or update the local stars index")
-    parser.add_argument("-r", "--reindex", action="store_true", help="re-create the local stars index")
-    parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
+    parser.add_argument("-l", "--language", 
+        help="filter by language", nargs='+')
+    parser.add_argument("-u", "--update", action="store_true", 
+        help="create(first time) or update the local stars index")
+    parser.add_argument("-r", "--reindex", action="store_true", 
+        help="re-create the local stars index")
+    parser.add_argument('-v', '--version', action='version', 
+        version='%(prog)s ' + __version__)
     
     args = parser.parse_args()
     
@@ -51,7 +56,8 @@ def main():
             
         g = login(user, password)
         
-        with StarredDB(STAR_PILOT_HOME, mode='t' if args.reindex else 'w') as db:
+        mode = 't' if args.reindex else 'w'
+        with StarredDB(STAR_PILOT_HOME, mode) as db:
             for repo in g.iter_starred():
                 print(repo.full_name)
                 db.update(repo)
