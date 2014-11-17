@@ -14,7 +14,7 @@ class StarredDB(object):
     def __init__(self, star_pilot_home, mode):
         self._db = kc.DB()
         self._db_file = os.path.join(
-            star_pilot_home, "starpilot.kch#opts=sc#zcomp=gz")
+            star_pilot_home, "mystars.kct#opts=sc#zcomp=gz")
         if mode == 'r':
             self._mode = kc.DB.OREADER
         elif mode == 'w':

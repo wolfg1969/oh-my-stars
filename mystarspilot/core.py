@@ -16,7 +16,7 @@ try:
 except ImportError:
     import pyreadline as readline
     
-STAR_PILOT_HOME = os.path.join(os.path.expanduser("~"), ".starpilot")
+STAR_PILOT_HOME = os.path.join(os.path.expanduser("~"), ".mystarspilot")
 
 
 def main():
