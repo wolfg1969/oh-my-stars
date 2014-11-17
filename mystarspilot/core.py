@@ -16,7 +16,7 @@ try:
 except ImportError:
     import pyreadline as readline
     
-STAR_PILOT_HOME = os.path.join(os.path.expanduser("~"), ".starpilot")
+STAR_PILOT_HOME = os.path.join(os.path.expanduser("~"), ".mystarspilot")
 
 
 def main():
@@ -33,6 +33,8 @@ def main():
         help="create(first time) or update the local stars index")
     parser.add_argument("-r", "--reindex", action="store_true", 
         help="re-create the local stars index")
+    parser.add_argument("-a", "--alfred", action="store_true", 
+        help="format search result as Alfred XML")
     parser.add_argument('-v', '--version', action='version', 
         version='%(prog)s ' + __version__)
     
@@ -71,4 +73,5 @@ def main():
     with StarredDB(STAR_PILOT_HOME, mode='r') as db:
         search_result = db.search(args.language, args.keywords)
     
-    SearchResultView().print_search_result(search_result, args.keywords)
+    SearchResultView().print_search_result(
+        search_result, args.keywords, alfred_format=args.alfred)

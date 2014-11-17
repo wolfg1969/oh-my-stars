@@ -75,5 +75,6 @@ setup(name='mystarspilot',
     },
     packages=find_packages(),
     extras_require=extras_require,
-    install_requires=install_requires
+    install_requires=install_requires,
+    data_files=[('.', ['My Stars Pilot.alfredworkflow', ]),]
 )
