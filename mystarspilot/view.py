@@ -30,6 +30,7 @@ class SearchResultView(object):
                         "", repo.html_url))
                     print(u"\t\t<title>{}</title>".format(repo.full_name))
                     if repo.description:
+                        print(u"<subtitle>")
                         print(repo.description.encode('utf-8'), end=' ')
                         if repo.language:
                             print(repo.language, end='')
