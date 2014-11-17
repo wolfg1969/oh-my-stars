@@ -7,17 +7,45 @@ import re
 
 class SearchResultView(object):
     
-    def print_search_result(self, search_result, keywords=None):
+    def print_search_result(self, search_result, 
+                            keywords=None, alfred_format=False):
         
         if search_result is not None:
-            for repo in search_result:
-                self._print('', end='\n')
-                self.print_repo_name(repo, keywords)
-                self.print_repo_url(repo)
-                self.print_repo_language(repo)
-                self.print_repo_description(repo, keywords)
             
-            self.print_summary(search_result)
+            if alfred_format:
+                """
+<?xml version="1.0"?>
+<items>
+    <item uid="desktop" arg="~/Desktop" valid="YES" autocomplete="Desktop" type="file">
+        <title>Desktop</title>
+        <subtitle>~/Desktop</subtitle>
+        <icon type="fileicon">~/Desktop</icon>
+    </item>
+</items>
+                """
+                print(u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+                print(u"<items>")
+                for repo in search_result:
+                    print(u"\t<item uid=\"{}\" arg=\"{}\">".format(
+                        "", repo.html_url))
+                    print(u"\t\t<title>{}</title>".format(repo.full_name))
+                    if repo.description:
+                        print(repo.description.encode('utf-8'), end=' ')
+                        if repo.language:
+                            print(repo.language, end='')
+                        print(u"</subtitle>")
+                    # print(u"\t\t<icon type=\"fileicon\">GitHub.png</icon>")
+                    print(u"\t</item>")
+                print(u"</items>")
+            else:
+                for repo in search_result:
+                    self._print('', end='\n')
+                    self.print_repo_name(repo, keywords)
+                    self.print_repo_url(repo)
+                    self.print_repo_language(repo)
+                    self.print_repo_description(repo, keywords)
+            
+                self.print_summary(search_result)
           
     def print_summary(self, search_result):
         self._print('', end='\n')
