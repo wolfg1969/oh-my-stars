@@ -56,13 +56,17 @@ def main():
             print(Fore.RED + "password is required.")
             sys.exit(1)
             
-        g = login(user, password)
+        #g = login(user, password)
         
         mode = 't' if args.reindex else 'w'
+        #with StarredDB(STAR_PILOT_HOME, mode) as db:
+        #    for repo in g.iter_starred():
+        #        print(repo.full_name)
+        #        db.update(repo)
+        
         with StarredDB(STAR_PILOT_HOME, mode) as db:
-            for repo in g.iter_starred():
-                print(repo.full_name)
-                db.update(repo)
+            print ('Building inverted index...')   
+            db.build_inverted_index()
                 
         sys.exit(0)
        
