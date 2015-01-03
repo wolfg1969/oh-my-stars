@@ -3,69 +3,27 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from github3.repos.repo import Repository
-from tinydb import TinyDB, JSONStorage, where
-import umsgpack
-import json
+from tinydb import TinyDB
 import os
 import re
-
-
-class MsgPackStorage(JSONStorage):
-    
-    def __init__(self, *args, **kwargs):
-        path = args[0]
-        super(MsgPackStorage, self).__init__(path)
+            
         
-        self.save_on_close = kwargs.pop('save_on_close', False)
-        self.load_only_once = kwargs.pop('load_only_once', False)
-        self.data = {}
-        self.data_loaded = False
-        
-    def _save(self):
-        self._handle.seek(0)
-        umsgpack.dump(self.data, self._handle)
-        self._handle.flush()
-        self._handle.truncate()
-        
-    def close(self):
-        if self.save_on_close:
-            self._save()
-        self._handle.close()
-    
-    def read(self):
-        
-        try:
-            if not self.load_only_once or (self.load_only_once and not self.data_loaded):
-                self._handle.seek(0)
-                self.data = umsgpack.load(self._handle)
-        except umsgpack.InsufficientDataException:
-            self.data = {}
-        finally:
-            self.data_loaded = True
-        return self.data
-
-    def write(self, data):
-        
-        if not self.save_on_close:
-            self._save()
-        else:
-            self.data = data
-        
-
 class StarredDB(object):
     
     def __init__(self, star_pilot_home, mode):
-        self._db = TinyDB(os.path.join(star_pilot_home, "mystars.bin"), 
-            storage=MsgPackStorage, save_on_close=True, load_only_once=True)
-        self._idx = TinyDB(os.path.join(star_pilot_home, "mystars.idx"), 
-            storage=MsgPackStorage, save_on_close=True, load_only_once=True)
+        self._db = TinyDB(os.path.join(star_pilot_home, "mystars.db"))
+        self._idx = {
+            'language': {},
+            'keyword': {}
+        }
+        self.mode = mode
+        
         
     def __enter__(self):
         return self
         
     def __exit__(self, type, value, traceback):
         self._db.close()
-        self._idx.close()
         
     def _generate_key(self, domain, name):
         try:
@@ -93,76 +51,72 @@ class StarredDB(object):
             for key in repo_keys.split('|'):
                 search_results.append(key)
                 
-    def _update_inverted_index(self, index_table, key, doc_id):
-        ind_table = self._idx.table(index_table)
-        ind_table.insert({
-            'term': key,
-            'doc_id': doc_id
-        })
+    def _update_inverted_index(self, index_name, key, eid):
+        
+        index = self._idx.get(index_name)
+        
+        id_list = index.get(key, [])
+        if eid not in id_list:
+            id_list.append(eid)
+        
+        index[key] = id_list
                 
-    def build_inverted_index(self):
-        for doc in self._db.all():
+    def _build_index(self):
+        
+        for repo in self._db.all():
             
-            repo = Repository(doc)
-            full_name = repo.full_name
-            name = repo.name
-            language = repo.language
-            description = repo.description
+            name = repo.get('name')
+            language = repo.get('language')
+            description = repo.get('description')
             
-            print(full_name)
-            
-            if repo.language:
-                self._update_inverted_index('language', repo.language, doc.eid)
+            if language:
+                for lang in language.split():
+                    self._update_inverted_index('language', lang.lower(), repo.eid)
                 
             keywords = re.compile("[_\-]").split(name)
             if description:
                 keywords += re.compile("[\s_\-]").split(description)
-            
             for keyword in keywords:
                 for n in range(2, len(keyword)+1):
                     for word in self._calculate_ngrams(keyword, n):
-                        self._update_inverted_index('keyword', keyword.lower(), doc.eid)
+                        self._update_inverted_index('keyword', word.lower(), repo.eid)
             
-    def update(self, repository):
+    def update(self, repo_list):
         
-        full_name = repository.full_name
-        name = repository.name
-        language = repository.language
-        description = repository.description
-        
-        #repo_key = self._generate_key("r", repository.full_name)
-        
-        #if language:
-        #    lang_index_key = self._generate_key("idxl", language.lower())
-        #    self._update_index(lang_index_key, repo_key)
+        if self.mode == 't':
+            self._db.purge_tables()
             
-        #keywords = re.compile("[_\-]").split(name)
-        #if description:
-        #    keywords += re.compile("[\s_\-]").split(description)
+        if repo_list:
+            self._db.table('latest_repo').purge()
+            self._db.table('latest_repo').insert(repo_list[0])
+        
+        for repo in repo_list:
+        
+            # save repo data
+            self._db.insert(repo)
+        
+    def get_latest_repo_full_name(self):
+        latest_repo = self._db.table('latest_repo').get(eid='1')
+        if latest_repo:
+            return latest_repo.get('full_name')
+        else:
+            return ''
             
-        #for keyword in keywords:
-        #    for n in range(2, len(keyword)+1):
-        #        for word in self._calculate_ngrams(keyword, n):
-        #            keyword_index_key = self._generate_key("idxk", word.lower())
-        #            self._update_index(keyword_index_key, repo_key)
-                    
-        #self._db.set(repo_key, json.dumps(repository.to_json()))
-        if not self._db.contains(where({'full_name'}) == full_name):
-            self._db.insert(repository.to_json())
         
     def search(self, languages, keywords):
+        
+        self._build_index()
         
         language_results = []
         if languages:
             for search in languages:
-                self._search_index("idxl", search, language_results)
+                language_results = language_results + self._idx['language'].get(search.lower(), [])
         
         keywords_results = []
         if keywords:
             for keyword in keywords:
                 for term in re.compile("[_\-]").split(keyword):
-                    results = []
-                    self._search_index("idxk", term, results)
+                    results = self._idx['keyword'].get(unicode(term, 'utf-8').lower(), [])
                     keywords_results.append(results)
         
         if languages and keywords:
@@ -181,10 +135,14 @@ class StarredDB(object):
                         final_keywords_results.append(r)
                         
             search_results = language_results + final_keywords_results
-            
-        repo_results = self._db.get_bulk_str(search_results)
         
-        if repo_results:
-            return [Repository(json.loads(repo)) for repo in repo_results.values()]
-        else:
-            return []
+        # remove duplicates then sort by id
+        search_results = sorted(list(set(search_results)), key=int)  
+        
+        repo_results= []
+        for eid in search_results:
+            repo = self._db.get(eid=eid)
+            if repo:
+                repo_results.append(repo)
+                
+        return repo_results
