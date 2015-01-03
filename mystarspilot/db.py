@@ -25,31 +25,8 @@ class StarredDB(object):
     def __exit__(self, type, value, traceback):
         self._db.close()
         
-    def _generate_key(self, domain, name):
-        try:
-            return u"{}:{}".format(domain, name)
-        except UnicodeDecodeError:
-            return u"{}:{}".format(domain, unicode(name, 'utf8'))
-        
     def _calculate_ngrams(self, word, n):
       return [ u''.join(gram) for gram in zip(*[word[i:] for i in range(n)])]
-    
-    def _update_index(self, index_key, value_key):
-        index = self._db.get(index_key)
-        if index:
-            if not value_key in index:
-                self._db.append(index_key, "|{}".format(value_key))
-        else:
-            self._db.set(index_key, value_key)
-            
-    def _search_index(self, domain_prefix, term, search_results):
-    
-        index_key = self._generate_key(domain_prefix, term.lower())
-        repo_keys = self._db.get_str(index_key)
-
-        if repo_keys:
-            for key in repo_keys.split('|'):
-                search_results.append(key)
                 
     def _update_inverted_index(self, index_name, key, eid):
         
