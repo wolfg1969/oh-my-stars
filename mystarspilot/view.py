@@ -59,20 +59,21 @@ class SearchResultView(object):
         self._print(text, fore_color, end='\n')
         
     def print_repo_name(self, repo, keywords):
-        text = self._highlight_keywords(repo.full_name, keywords)
+        text = self._highlight_keywords(repo.get('full_name'), keywords)
         self._print(text, Fore.GREEN)
         
     def print_repo_url(self, repo):
-        self._print("[{}]".format(repo.html_url), Fore.YELLOW)
+        self._print("[{}]".format(repo.get('url')), Fore.YELLOW)
         
     def print_repo_language(self, repo):
-        if repo.language:
-            self._print(repo.language, Fore.BLUE, end='\n')
+        lang = repo.get('language')
+        if lang:
+            self._print(lang, Fore.BLUE, end='\n')
             
     def print_repo_description(self, repo, keywords):
-        if repo.description:
-            text = self._highlight_keywords(
-                repo.description, keywords, fore_color=Fore.WHITE)
+        desc = repo.get('description')
+        if desc:
+            text = self._highlight_keywords(desc, keywords, fore_color=Fore.WHITE)
             self._print(text, Fore.WHITE, end='\n')
         
     def _print(self, text='', fore_color=Fore.WHITE, end=' '):

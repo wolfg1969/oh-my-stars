@@ -59,11 +59,29 @@ def main():
         g = login(user, password)
         
         mode = 't' if args.reindex else 'w'
+        
         with StarredDB(STAR_PILOT_HOME, mode) as db:
+            repo_list = []
+            
             for repo in g.iter_starred():
-                print(repo.full_name)
-                db.update(repo)
-                
+                if db.get_latest_repo_full_name() == repo.full_name:
+                    break
+                print(Fore.BLUE + repo.full_name + Fore.RESET)
+                repo_list.append({
+                    'full_name': repo.full_name,
+                    'name': repo.name,
+                    'url': repo.html_url,
+                    'language': repo.language,
+                    'description': repo.description,
+                })
+            if repo_list:
+                print(Fore.GREEN + 'Saving repo data...')
+                db.update(repo_list)
+                print(Fore.RED + 'Done.' + Fore.RESET)   
+            else:
+                print(Fore.RED + 'No new stars found.' + Fore.RESET)
+            
+             
         sys.exit(0)
        
     if not args.keywords and not args.language:
