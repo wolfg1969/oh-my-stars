@@ -14,7 +14,7 @@ Search Github Repositories starred by me through the command line.
 
 ##### Installation (Mac OSX)
 ```
-$ pip install mystartspilot
+$ pip install mystarspilot --upgrade
 $ mystars --help
 $ mystars --update
 $ mystars angular upload

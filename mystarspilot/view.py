@@ -26,14 +26,18 @@ class SearchResultView(object):
                 print(u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
                 print(u"<items>")
                 for repo in search_result:
-                    print(u"\t<item uid=\"{}\" arg=\"{}\">".format(
-                        "", repo.html_url))
-                    print(u"\t\t<title>{}</title>".format(repo.full_name))
-                    if repo.description:
+                    full_name = repo.get('full_name')
+                    url = repo.get('url')
+                    language = repo.get('language')
+                    description = repo.get('description')
+                    print(u"\t<item uid=\"{}\" arg=\"{}\">".format("", url))
+                    print(u"\t\t<title>{}</title>".format(full_name))
+                    
+                    if description:
                         print(u"<subtitle>", end='')
-                        print(repo.description.encode('utf-8'), end=' ')
-                        if repo.language:
-                            print(repo.language, end='')
+                        print(description.encode('utf-8'), end=' ')
+                        if language:
+                            print(language, end='')
                         print(u"</subtitle>")
                     # print(u"\t\t<icon type=\"fileicon\">GitHub.png</icon>")
                     print(u"\t</item>")
