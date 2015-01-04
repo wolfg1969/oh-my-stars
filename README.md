@@ -14,8 +14,6 @@ Search Github Repositories starred by me through the command line.
 
 ##### Installation (Mac OSX)
 ```
-$ brew install kyoto-cabinet
-$ pip install --upgrade pip
 $ pip install mystartspilot
 $ mystars --help
 $ mystars --update
