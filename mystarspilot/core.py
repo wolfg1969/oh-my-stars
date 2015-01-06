@@ -15,6 +15,11 @@ try:
     import readline
 except ImportError:
     import pyreadline as readline
+
+try:
+    prompt = raw_input
+except NameError:
+    prompt = input
     
 STAR_PILOT_HOME = os.path.join(os.path.expanduser("~"), ".mystarspilot")
 
@@ -43,7 +48,7 @@ def main():
     if args.update or args.reindex:
         
         try:
-            user = raw_input('GitHub username: ')
+            user = prompt('GitHub username: ')
         except KeyboardInterrupt:
             user = getuser()
         else:
@@ -55,8 +60,13 @@ def main():
         if not password:
             print(Fore.RED + "password is required.")
             sys.exit(1)
-            
-        g = login(user, password)
+
+        def gh2f():
+            code = ''
+            while not code:
+                code = prompt('Enter 2FA code: ')
+            return code
+        g = login(user, password, two_factor_callback=gh2f)
         
         mode = 't' if args.reindex else 'w'
         
