@@ -7,6 +7,9 @@ Search Github Repositories starred by me through the command line.
 ![mystarspilot-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/mystarspilot-alfred-workflow.png)
 
 
+##### v1.0.1
+- Support Github two-factor authentication 
+
 ##### v1.0.0
 
 - Replace kc with [TinyDB](https://github.com/msiemens/tinydb), no more non-python dependencies.
