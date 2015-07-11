@@ -10,8 +10,8 @@ import re
         
 class StarredDB(object):
     
-    def __init__(self, star_pilot_home, mode):
-        self._db = TinyDB(os.path.join(star_pilot_home, "mystars.db"))
+    def __init__(self, my_stars_home, mode):
+        self._db = TinyDB(os.path.join(my_stars_home, "mystars.db"))
         self._idx = {
             'language': {},
             'keyword': {}

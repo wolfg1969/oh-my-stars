@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 import codecs
 import os
 import sys
-import mystarspilot
+import ohmystars
 
 
 install_requires = [
@@ -39,9 +39,9 @@ def long_description():
     with codecs.open('README.md', encoding='utf8') as f:
         return f.read()
 
-setup(name='mystarspilot',
-    version=mystarspilot.__version__,
-    description="a CLI tool to search your starred Github repositories.",
+setup(name='oh-my-stars',
+    version=ohmystars.__version__,
+    description="a CLI tool to search your GitHub stars.",
     long_description=long_description(),
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
@@ -61,18 +61,18 @@ setup(name='mystarspilot',
     ],
     platforms = 'any',
     keywords='github command tools',
-    author=mystarspilot.__author__,
+    author=ohmystars.__author__,
     author_email='wolfg1969@gmail.com',
-    url='https://github.com/wolfg1969/my-stars-pilot',
-    license=mystarspilot.__license__,
+    url='https://github.com/wolfg1969/oh-my-stars',
+    license=ohmystars.__license__,
     zip_safe=False,
     entry_points = {
         'console_scripts': [
-            'mystars = mystarspilot.__main__:main',
+            'mystars = ohmystars.__main__:main',
         ],
     },
     packages=find_packages(),
     extras_require=extras_require,
     install_requires=install_requires,
-    data_files=[('.', ['My Stars Pilot.alfredworkflow', ]),]
+    data_files=[('.', ['Oh My Stars.alfredworkflow', ]),]
 )

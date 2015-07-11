@@ -21,13 +21,13 @@ try:
 except NameError:
     prompt = input
     
-STAR_PILOT_HOME = os.path.join(os.path.expanduser("~"), ".mystarspilot")
+MY_STARS_HOME = os.path.join(os.path.expanduser("~"), ".oh-my-stars")
 
 
 def main():
     
-    if not os.path.exists(STAR_PILOT_HOME):
-        os.makedirs(STAR_PILOT_HOME)
+    if not os.path.exists(MY_STARS_HOME):
+        os.makedirs(MY_STARS_HOME)
     
     parser = argparse.ArgumentParser(
         description="a CLI tool to search your starred Github repositories.")
@@ -70,7 +70,7 @@ def main():
         
         mode = 't' if args.reindex else 'w'
         
-        with StarredDB(STAR_PILOT_HOME, mode) as db:
+        with StarredDB(MY_STARS_HOME, mode) as db:
             repo_list = []
             
             for repo in g.iter_starred():
@@ -98,7 +98,7 @@ def main():
         parser.print_help()
         sys.exit(0)
     
-    with StarredDB(STAR_PILOT_HOME, mode='r') as db:
+    with StarredDB(MY_STARS_HOME, mode='r') as db:
         search_result = db.search(args.language, args.keywords)
     
     SearchResultView().print_search_result(

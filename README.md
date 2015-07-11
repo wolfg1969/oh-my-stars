@@ -1,11 +1,13 @@
-# mystarspilot
+# oh-my-stars
 
-Search Github Repositories starred by me through the command line.
+Search your stars locally.
 
 ##### Works with Alfred Workflow
 
-![mystarspilot-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/mystarspilot-alfred-workflow.png)
+![oh-my-stars-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars-alfred-workflow.png)
 
+##### v1.0.2
+- Rename to oh-my-stars
 
 ##### v1.0.1
 - Support Github two-factor authentication 
@@ -17,7 +19,7 @@ Search Github Repositories starred by me through the command line.
 
 ##### Installation (Mac OSX)
 ```
-$ pip install mystarspilot --upgrade
+$ pip install oh-my-stars --upgrade
 $ mystars --help
 $ mystars --update
 $ mystars angular upload
@@ -25,4 +27,4 @@ $ mystars --language python
 $ mystars awesome python
 ``` 
 
-![mystarspilot](https://raw.github.com/wolfg1969/my-stars-pilot/master/mystarspilot.png)
+![oh-my-stars](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars.png)
