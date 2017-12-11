@@ -1,22 +1,21 @@
 from setuptools import setup, find_packages
 import codecs
-import os
 import sys
 import ohmystars
 
 
 install_requires = [
-    'github3.py==0.9.3',
-    'tinydb>=2.2.0',
-    'colorama>=0.2.4',
+    'colorama==0.3.9',
+    'future==0.16.0',
+    'github3.py==0.9.6',
+    'tinydb==3.7.0',
 ]
 
-### Conditional dependencies:
+# Conditional dependencies:
 
 # sdist
-if not 'bdist_wheel' in sys.argv:
+if 'bdist_wheel' not in sys.argv:
     try:
-        #noinspection PyUnresolvedReferences
         import argparse
     except ImportError:
         install_requires.append('argparse>=1.2.1')
@@ -35,11 +34,14 @@ extras_require = {
     ':sys_platform == "win32"': ['pyreadline'],
 }
 
+
 def long_description():
     with codecs.open('README.md', encoding='utf8') as f:
         return f.read()
 
-setup(name='oh-my-stars',
+
+setup(
+    name='oh-my-stars',
     version=ohmystars.__version__,
     description="a CLI tool to search your GitHub stars.",
     long_description=long_description(),
@@ -56,23 +58,25 @@ setup(name='oh-my-stars',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Terminals',
         'Topic :: Utilities',
     ],
-    platforms = 'any',
+    platforms='any',
     keywords='github command tools',
     author=ohmystars.__author__,
     author_email='wolfg1969@gmail.com',
     url='https://github.com/wolfg1969/oh-my-stars',
     license=ohmystars.__license__,
     zip_safe=False,
-    entry_points = {
+    entry_points={
         'console_scripts': [
-            'mystars = ohmystars.__main__:main',
+            'mystars=ohmystars.__main__:main',
         ],
     },
     packages=find_packages(),
     extras_require=extras_require,
     install_requires=install_requires,
-    data_files=[('.', ['Oh My Stars.alfredworkflow', ]),]
+    data_files=[('.', ['Oh My Stars.alfredworkflow', ]), ]
 )

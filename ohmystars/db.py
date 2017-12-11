@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from github3.repos.repo import Repository
+from __future__ import (absolute_import, division, print_function, unicode_literals)
+from builtins import *
+
+from datetime import datetime
 from tinydb import TinyDB
+
 import os
 import re
             
@@ -11,14 +12,13 @@ import re
 class StarredDB(object):
     
     def __init__(self, my_stars_home, mode):
-        self._db = TinyDB(os.path.join(my_stars_home, "mystars.db"))
+        self._db = TinyDB(os.path.join(my_stars_home, 'mystars.db'))
         self._idx = {
             'language': {},
             'keyword': {}
         }
         self.mode = mode
-        
-        
+
     def __enter__(self):
         return self
         
@@ -26,10 +26,9 @@ class StarredDB(object):
         self._db.close()
         
     def _calculate_ngrams(self, word, n):
-      return [ u''.join(gram) for gram in zip(*[word[i:] for i in range(n)])]
+        return [u''.join(gram) for gram in zip(*[word[i:] for i in range(n)])]
                 
     def _update_inverted_index(self, index_name, key, eid):
-        
         index = self._idx.get(index_name)
         
         id_list = index.get(key, [])
@@ -39,7 +38,9 @@ class StarredDB(object):
         index[key] = id_list
                 
     def _build_index(self):
-        
+
+        t1 = datetime.now()
+
         for repo in self._db.all():
             
             name = repo.get('name')
@@ -57,6 +58,9 @@ class StarredDB(object):
                 for n in range(2, len(keyword)+1):
                     for word in self._calculate_ngrams(keyword, n):
                         self._update_inverted_index('keyword', word.lower(), repo.eid)
+
+        t2 = datetime.now()
+        print('_build_index:', (t2 - t1).total_seconds())
             
     def update(self, repo_list):
         
@@ -73,15 +77,12 @@ class StarredDB(object):
             self._db.insert(repo)
         
     def get_latest_repo_full_name(self):
-        latest_repo = self._db.table('latest_repo').get(eid='1')
-        if latest_repo:
-            return latest_repo.get('full_name')
-        else:
-            return ''
-            
-        
+        latest_repo = self._db.table('latest_repo').all()
+        if len(latest_repo) > 0:
+            return latest_repo[0].get('full_name')
+
     def search(self, languages, keywords):
-        
+
         self._build_index()
         
         language_results = []
@@ -93,18 +94,16 @@ class StarredDB(object):
         if keywords:
             for keyword in keywords:
                 for term in re.compile("[_\-]").split(keyword):
-                    results = self._idx['keyword'].get(unicode(term, 'utf-8').lower(), [])
+                    results = self._idx['keyword'].get(term.lower(), [])
                     keywords_results.append(results)
         
         if languages and keywords:
             # python > 2.6
-            search_results = list(set(
-                language_results).intersection(*keywords_results))  
+            search_results = list(set(language_results).intersection(*keywords_results))
         else:
             if len(keywords_results) > 1:
                 # python > 2.6
-                final_keywords_results = list(set(
-                    keywords_results[0]).intersection(*keywords_results[1:]))  
+                final_keywords_results = list(set(keywords_results[0]).intersection(*keywords_results[1:]))
             else:
                 final_keywords_results = []
                 for results in keywords_results:
@@ -116,7 +115,7 @@ class StarredDB(object):
         # remove duplicates then sort by id
         search_results = sorted(list(set(search_results)), key=int)  
         
-        repo_results= []
+        repo_results = []
         for eid in search_results:
             repo = self._db.get(eid=eid)
             if repo:
