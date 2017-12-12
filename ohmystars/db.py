@@ -25,7 +25,7 @@ class StarredDB(object):
     def __exit__(self, type, value, traceback):
         self._db.close()
         
-    def _calculate_ngrams(self, word, n):
+    def _calculate_ngrams(self, word, n):  # https://en.wikipedia.org/wiki/N-gram
         return [u''.join(gram) for gram in zip(*[word[i:] for i in range(n)])]
                 
     def _update_inverted_index(self, index_name, key, eid):
