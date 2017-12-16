@@ -8,7 +8,7 @@ from colorama import Fore
 from getpass import getpass, getuser
 
 from github3 import login
-from .db import StarredDB
+from .db import StarredDB, EmptyIndexWarning
 from .view import SearchResultView
 from . import __version__
 
@@ -25,7 +25,7 @@ except ImportError:
 MY_STARS_HOME = os.path.join(os.path.expanduser('~'), '.oh-my-stars')
 
 
-def main(args):
+def main(args=None):
     
     if not os.path.exists(MY_STARS_HOME):
         os.makedirs(MY_STARS_HOME)
@@ -83,9 +83,12 @@ def main(args):
                     'description': repo.description,
                 })
             if repo_list:
+                t1 = datetime.now()
                 print(Fore.GREEN + 'Saving repo data...')
                 db.update(repo_list)
-                print(Fore.RED + 'Done.' + Fore.RESET)   
+
+                t2 = datetime.now()
+                print(Fore.RED + 'Done. ({:0.3}s)'.format((t2 - t1).total_seconds()) + Fore.RESET)
             else:
                 print(Fore.RED + 'No new stars found.' + Fore.RESET)
 
@@ -95,12 +98,14 @@ def main(args):
         parser.print_help()
         sys.exit(0)
 
-    t1 = datetime.now()
-
     with StarredDB(MY_STARS_HOME, mode='r') as db:
-        search_result = db.search(parsed_args.language, parsed_args.keywords)
+        try:
+            t1 = datetime.now()
+            search_result = db.search(parsed_args.language, parsed_args.keywords)
+            t2 = datetime.now()
 
-    t2 = datetime.now()
+            view = SearchResultView((t2 - t1).total_seconds())
+            view.print_search_result(search_result, parsed_args.keywords, alfred_format=parsed_args.alfred)
 
-    view = SearchResultView(search_result, (t2 - t1).total_seconds())
-    view.print_search_result(parsed_args.keywords, alfred_format=parsed_args.alfred)
+        except EmptyIndexWarning:
+            print(Fore.RED + 'Empty index.' + Fore.RESET)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 from builtins import *
-
+from xml.sax.saxutils import escape
 from colorama import Fore, Back, Style
 
 import re
@@ -9,63 +9,88 @@ import re
 
 class SearchResultView(object):
 
-    def __init__(self, search_result, time_consumed):
-        self.search_result = search_result
+    def __init__(self, time_consumed):
         self.time_consumed = time_consumed
     
-    def print_search_result(self, keywords=None, alfred_format=False):
-        
-        if self.search_result is not None:
+    def print_search_result(self, search_result, keywords=None, alfred_format=False):
             
-            if alfred_format:
-                """
+        if alfred_format:
+            """
 <?xml version="1.0"?>
 <items>
-    <item uid="desktop" arg="~/Desktop" valid="YES" autocomplete="Desktop" type="file">
-        <title>Desktop</title>
-        <subtitle>~/Desktop</subtitle>
-        <icon type="fileicon">~/Desktop</icon>
-    </item>
+<item uid="desktop" arg="~/Desktop" valid="YES" autocomplete="Desktop" type="file">
+    <title>Desktop</title>
+    <subtitle>~/Desktop</subtitle>
+    <icon type="fileicon">~/Desktop</icon>
+</item>
 </items>
-                """
-                print(u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-                print(u"<items>")
-                for repo in self.search_result:
-                    full_name = repo.get('full_name')
-                    url = repo.get('url')
-                    language = repo.get('language')
-                    description = repo.get('description')
-                    print(u"\t<item uid=\"{}\" arg=\"{}\">".format("", url))
-                    print(u"\t\t<title>{}</title>".format(full_name))
-                    
-                    if description:
-                        print(u"<subtitle>", end='')
-                        print(description.encode('utf-8'), end=' ')
-                        if language:
-                            print(language, end='')
-                        print(u"</subtitle>")
-                    # print(u"\t\t<icon type=\"fileicon\">GitHub.png</icon>")
-                    print(u"\t</item>")
-                print(u"</items>")
-            else:
-                for repo in self.search_result:
+            """
+            print(u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+            print(u"<items>")
+            count = 0
+            for repo in search_result:
+                count += 1
+                if count == 1:
+                    continue
+
+                full_name = repo.get('full_name')
+                url = repo.get('url')
+                language = repo.get('language')
+                description = repo.get('description')
+
+                print(u"\t<item uid=\"{}\" arg=\"{}\">".format("", url))
+                print(u"\t\t<title>{}</title>".format(escape(full_name)))
+
+                if description:
+                    print(u"<subtitle>", end='')
+                    print(escape(description), end=' ')
+                    if language:
+                        print(language, end='')
+                    print(u"</subtitle>")
+                # print(u"\t\t<icon type=\"fileicon\">GitHub.png</icon>")
+                print(u"\t</item>")
+
+                if count >= 10:
+                    break
+
+            print(u"</items>")
+        else:
+            count = 0
+            total = 0
+            for repo in search_result:
+
+                count += 1
+
+                if count == 1:  # total number
+                    print('repo=', repo)
+                    total = repo
+                    self.print_summary(total)
+                    continue
+
+                self._print('', end='\n')
+                self.print_repo_name(repo, keywords)
+                self.print_repo_url(repo)
+                self.print_repo_language(repo)
+                self.print_repo_description(repo, keywords)
+
+                if (count - 1) % 10 == 0:
                     self._print('', end='\n')
-                    self.print_repo_name(repo, keywords)
-                    self.print_repo_url(repo)
-                    self.print_repo_language(repo)
-                    self.print_repo_description(repo, keywords)
-            
-                self.print_summary()
+                    self._print('({} to {} of {})'.format(
+                        count - 10, count - 1, total), Fore.GREEN, end='\n')
+                    s = input('Press <Enter> key to continue... (\'q\' to quit)')
+                    if s == 'q':
+                        break
+            if total > 10:
+                self.print_summary(total)
           
-    def print_summary(self):
+    def print_summary(self, count):
         self._print('', end='\n')
-        count = len(self.search_result)
         fore_color = Fore.GREEN if count else Fore.YELLOW
         
         text = "({num} star{suffix} found in {time}s)".format(
             num=count if count else "No",
             suffix='s' if count > 1 else '',
-            time='{:0.3}'.format(self.time_consumed),
+            time='{:3.5f}'.format(self.time_consumed),
         )
             
         self._print(text, fore_color, end='\n')

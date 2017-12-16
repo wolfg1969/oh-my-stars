@@ -1,22 +1,35 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 from builtins import *
-
-from datetime import datetime
-from tinydb import TinyDB
+from tinydb import TinyDB, Query, operations
 
 import os
-import re
-            
-        
+
+from .index import update_inverted_index, split_keywords, split_repo_name, split_repo_desc
+
+
+class EmptyIndexWarning(RuntimeWarning):
+    pass
+
+
 class StarredDB(object):
     
     def __init__(self, my_stars_home, mode):
         self._db = TinyDB(os.path.join(my_stars_home, 'mystars.db'))
-        self._idx = {
-            'language': {},
-            'keyword': {}
-        }
+
+        self._idx = self._db.table('index')
+
+        if not self._idx.contains(Query().name == 'language'):
+            self._idx.insert({
+                'name': 'language',
+                'docs': {}
+            })
+        if not self._idx.contains(Query().name == 'keyword'):
+            self._idx.insert({
+                'name': 'keyword',
+                'docs': {}
+            })
+
         self.mode = mode
 
     def __enter__(self):
@@ -24,43 +37,9 @@ class StarredDB(object):
         
     def __exit__(self, type, value, traceback):
         self._db.close()
-        
-    def _calculate_ngrams(self, word, n):  # https://en.wikipedia.org/wiki/N-gram
-        return [u''.join(gram) for gram in zip(*[word[i:] for i in range(n)])]
-                
-    def _update_inverted_index(self, index_name, key, eid):
-        index = self._idx.get(index_name)
-        
-        id_list = index.get(key, [])
-        if eid not in id_list:
-            id_list.append(eid)
-        
-        index[key] = id_list
-                
-    def _build_index(self):
 
-        t1 = datetime.now()
-
-        for repo in self._db.all():
-            
-            name = repo.get('name')
-            language = repo.get('language')
-            description = repo.get('description')
-            
-            if language:
-                for lang in language.split():
-                    self._update_inverted_index('language', lang.lower(), repo.eid)
-                
-            keywords = re.compile("[_\-]").split(name)
-            if description:
-                keywords += re.compile("[\s_\-]").split(description)
-            for keyword in keywords:
-                for n in range(2, len(keyword)+1):
-                    for word in self._calculate_ngrams(keyword, n):
-                        self._update_inverted_index('keyword', word.lower(), repo.eid)
-
-        t2 = datetime.now()
-        print('_build_index:', (t2 - t1).total_seconds())
+    def _get_index_docs(self, name):
+        return self._idx.get(Query().name == name).get('docs', {})
             
     def update(self, repo_list):
         
@@ -70,12 +49,33 @@ class StarredDB(object):
         if repo_list:
             self._db.table('latest_repo').purge()
             self._db.table('latest_repo').insert(repo_list[0])
+
+        language_docs = self._get_index_docs('language')
+        keyword_docs = self._get_index_docs('keyword')
         
         for repo in repo_list:
         
             # save repo data
-            self._db.insert(repo)
-        
+            doc_id = self._db.insert(repo)
+
+            # update index
+            name = repo.get('name')
+            language = repo.get('language')
+            description = repo.get('description')
+
+            if language:
+                for lang in language.split():
+                    update_inverted_index(language_docs, lang.lower(), doc_id)
+
+            keywords = split_repo_name(name)
+            if description:
+                keywords += split_repo_desc(description)
+            for keyword in split_keywords(keywords):
+                update_inverted_index(keyword_docs, keyword.lower(), doc_id)
+
+        self._idx.update(operations.set('docs', language_docs), Query().name == 'language')
+        self._idx.update(operations.set('docs', keyword_docs), Query().name == 'keyword')
+
     def get_latest_repo_full_name(self):
         latest_repo = self._db.table('latest_repo').all()
         if len(latest_repo) > 0:
@@ -83,20 +83,25 @@ class StarredDB(object):
 
     def search(self, languages, keywords):
 
-        self._build_index()
-        
+        # self._build_index()
+        language_docs = self._get_index_docs('language')
+        keyword_docs = self._get_index_docs('keyword')
+
+        if not language_docs and not language_docs:
+            raise EmptyIndexWarning('empty index')
+
         language_results = []
         if languages:
             for search in languages:
-                language_results = language_results + self._idx['language'].get(search.lower(), [])
+                language_results += language_docs.get(search.lower(), [])
         
         keywords_results = []
         if keywords:
             for keyword in keywords:
-                for term in re.compile("[_\-]").split(keyword):
-                    results = self._idx['keyword'].get(term.lower(), [])
+                for term in split_repo_name(keyword):
+                    results = keyword_docs.get(term.lower(), [])
                     keywords_results.append(results)
-        
+
         if languages and keywords:
             # python > 2.6
             search_results = list(set(language_results).intersection(*keywords_results))
@@ -111,14 +116,10 @@ class StarredDB(object):
                         final_keywords_results.append(r)
                         
             search_results = language_results + final_keywords_results
-        
+
         # remove duplicates then sort by id
-        search_results = sorted(list(set(search_results)), key=int)  
-        
-        repo_results = []
-        for eid in search_results:
-            repo = self._db.get(eid=eid)
-            if repo:
-                repo_results.append(repo)
-                
-        return repo_results
+        search_results = sorted(list(set(search_results)), key=int)
+
+        yield len(search_results)
+        for doc_id in search_results:
+            yield self._db.get(doc_id=doc_id)

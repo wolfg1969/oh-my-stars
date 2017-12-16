@@ -9,6 +9,7 @@ install_requires = [
     'future==0.16.0',
     'github3.py==0.9.6',
     'tinydb==3.7.0',
+    'ujson==1.35',
 ]
 
 # Conditional dependencies:
