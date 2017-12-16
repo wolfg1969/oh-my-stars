@@ -62,7 +62,6 @@ class SearchResultView(object):
                 count += 1
 
                 if count == 1:  # total number
-                    print('repo=', repo)
                     total = repo
                     self.print_summary(total)
                     continue

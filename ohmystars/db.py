@@ -17,6 +17,9 @@ class StarredDB(object):
     def __init__(self, my_stars_home, mode):
         self._db = TinyDB(os.path.join(my_stars_home, 'mystars.db'))
 
+        if mode == 't':
+            self._db.purge_tables()
+
         self._idx = self._db.table('index')
 
         if not self._idx.contains(Query().name == 'language'):
@@ -30,8 +33,6 @@ class StarredDB(object):
                 'docs': {}
             })
 
-        self.mode = mode
-
     def __enter__(self):
         return self
         
@@ -42,10 +43,7 @@ class StarredDB(object):
         return self._idx.get(Query().name == name).get('docs', {})
             
     def update(self, repo_list):
-        
-        if self.mode == 't':
-            self._db.purge_tables()
-            
+
         if repo_list:
             self._db.table('latest_repo').purge()
             self._db.table('latest_repo').insert(repo_list[0])

@@ -6,6 +6,15 @@ Search your stars locally.
 
 ![oh-my-stars-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars-alfred-workflow.png)
 
+*Note*
+- Uninstall existing version
+- Rebuild existing index with `mystars -r`
+
+##### v1.1.3
+- Upgrade to TinyDB 3.7.0
+- Build index when updating
+- Search result pagination
+
 ##### v1.0.2
 - Rename to oh-my-stars
 
@@ -26,5 +35,12 @@ $ mystars angular upload
 $ mystars --language python
 $ mystars awesome python
 ``` 
+
+if install failed, try following commands
+```
+$ pip uninstall distribute
+$ pip install setuptools
+$ pip install --upgrade setuptools
+```
 
 ![oh-my-stars](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars.png)

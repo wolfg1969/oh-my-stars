@@ -88,7 +88,7 @@ def main(args=None):
                 db.update(repo_list)
 
                 t2 = datetime.now()
-                print(Fore.RED + 'Done. ({:0.3}s)'.format((t2 - t1).total_seconds()) + Fore.RESET)
+                print(Fore.RED + 'Done. ({:3.3}s)'.format((t2 - t1).total_seconds()) + Fore.RESET)
             else:
                 print(Fore.RED + 'No new stars found.' + Fore.RESET)
 

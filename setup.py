@@ -79,5 +79,4 @@ setup(
     packages=find_packages(),
     extras_require=extras_require,
     install_requires=install_requires,
-    data_files=[('.', ['Oh My Stars.alfredworkflow', ]), ]
 )
