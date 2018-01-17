@@ -6,20 +6,24 @@ Search your stars locally.
 
 ![oh-my-stars-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars-alfred-workflow.png)
 
-*Note*
-- Uninstall existing version
-- Rebuild existing index with `mystars -r`
+##### v1.2.3
+- Get user + password from netrc. @jhermann
+- Use pipenv to manage project requirements
 
 ##### v1.1.3
 - Upgrade to TinyDB 3.7.0
 - Build index when updating
 - Search result pagination
 
+*Note*
+- Uninstall existing version
+- Rebuild existing index with `mystars -r`
+
 ##### v1.0.2
 - Rename to oh-my-stars
 
 ##### v1.0.1
-- Support Github two-factor authentication 
+- Support Github two-factor authentication. @yanyaoer
 
 ##### v1.0.0
 

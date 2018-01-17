@@ -13,7 +13,7 @@ class EmptyIndexWarning(RuntimeWarning):
 
 
 class StarredDB(object):
-    
+
     def __init__(self, my_stars_home, mode):
         self._db = TinyDB(os.path.join(my_stars_home, 'mystars.db'))
 
@@ -35,13 +35,13 @@ class StarredDB(object):
 
     def __enter__(self):
         return self
-        
+
     def __exit__(self, type, value, traceback):
         self._db.close()
 
     def _get_index_docs(self, name):
         return self._idx.get(Query().name == name).get('docs', {})
-            
+
     def update(self, repo_list):
 
         if repo_list:
@@ -50,9 +50,9 @@ class StarredDB(object):
 
         language_docs = self._get_index_docs('language')
         keyword_docs = self._get_index_docs('keyword')
-        
+
         for repo in repo_list:
-        
+
             # save repo data
             doc_id = self._db.insert(repo)
 
@@ -92,7 +92,7 @@ class StarredDB(object):
         if languages:
             for search in languages:
                 language_results += language_docs.get(search.lower(), [])
-        
+
         keywords_results = []
         if keywords:
             for keyword in keywords:
@@ -112,7 +112,7 @@ class StarredDB(object):
                 for results in keywords_results:
                     for r in results:
                         final_keywords_results.append(r)
-                        
+
             search_results = language_results + final_keywords_results
 
         # remove duplicates then sort by id
