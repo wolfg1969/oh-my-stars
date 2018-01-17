@@ -6,6 +6,7 @@ from datetime import datetime
 
 from colorama import Fore
 from getpass import getpass, getuser
+from netrc import netrc, NetrcParseError
 
 from github3 import login
 from .db import StarredDB, EmptyIndexWarning
@@ -15,6 +16,7 @@ from . import __version__
 import argparse
 import os
 import sys
+import errno
 
 try:
     import readline
@@ -23,6 +25,19 @@ except ImportError:
 
     
 MY_STARS_HOME = os.path.join(os.path.expanduser('~'), '.oh-my-stars')
+
+
+def get_auth_from_netrc(hostname):
+    """Try to find login auth in ``~/.netrc``. Return ``(user, pwd)`` tuple. """
+    try:
+        auth = netrc()
+    except IOError as cause:
+        if cause.errno != errno.ENOENT:
+            raise
+        return None, None
+
+    username, _, password = auth.hosts.get(hostname, None) or (None,) * 3
+    return username, password
 
 
 def main(args=None):
@@ -42,17 +57,21 @@ def main(args=None):
     parsed_args = parser.parse_args(args)
     
     if parsed_args.update or parsed_args.reindex:
-        
-        try:
-            user = input('GitHub username: ')
-        except KeyboardInterrupt:
-            user = getuser()
-        else:
-            if not user:
+
+        user, password = get_auth_from_netrc('api.github.com')
+
+        if not user:
+            try:
+                user = input('GitHub username: ')
+            except KeyboardInterrupt:
                 user = getuser()
-            
-        password = getpass('GitHub password for {0}: '.format(user))
-        
+            else:
+                if not user:
+                    user = getuser()
+
+        if not password:
+            password = getpass('GitHub password for {0}: '.format(user))
+
         if not password:
             print(Fore.RED + 'password is required.')
             sys.exit(1)
