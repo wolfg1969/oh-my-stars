@@ -15,6 +15,7 @@ from . import __version__
 
 import argparse
 import os
+import subprocess
 import sys
 import errno
 
@@ -46,12 +47,14 @@ def main(args=None):
         os.makedirs(MY_STARS_HOME)
     
     parser = argparse.ArgumentParser(description='a CLI tool to search your starred Github repositories.')
-    parser.add_argument('keywords', nargs='*', help='search keywords')
-    parser.add_argument('-l', '--language', help='filter by language', nargs='+')
+    parser.add_argument('keywords', nargs='*', help='Search by keywords')
+    parser.add_argument('-l', '--language', help='Filter by language', nargs='+')
     parser.add_argument('-u', '--update', action='store_true',
-                        help='create(first time) or update the local stars index')
-    parser.add_argument('-r', '--reindex', action='store_true', help='re-create the local stars index')
-    parser.add_argument('-a', '--alfred', action='store_true', help='format search result as Alfred XML')
+                        help='Create(first time) or update the local stars index')
+    parser.add_argument('-r', '--reindex', action='store_true', help='Re-create the local stars index')
+    parser.add_argument('-a', '--alfred', action='store_true', help='Format search result as Alfred XML')
+    parser.add_argument('-3', '--alfred3', action='store_true', help='Alfred 3 support')
+    parser.add_argument('-i', '--install', action='store_true', help='Import Alfred workflow')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     
     parsed_args = parser.parse_args(args)
@@ -112,6 +115,26 @@ def main(args=None):
                 print(Fore.RED + 'No new stars found.' + Fore.RESET)
 
         sys.exit(0)
+
+    if parsed_args.install:
+
+        filename = 'ohmystars-v{}.alfredworkflow'.format(
+            '3' if parsed_args.alfred_v3 else '2'
+        )
+
+        ret = subprocess.call(' '.join([
+            
+            'curl -s -o /tmp/{}'.format(filename),
+
+            '"{url}{filename}"'.format(
+                url='https://github.com/wolfg1969/oh-my-stars/blob/master/',
+                filename=filename
+            ),
+
+            '&& open "/tmp/{}"'.format(filename)
+        ]), shell=True)
+
+        sys.exit(ret)
        
     if not parsed_args.keywords and not parsed_args.language:
         parser.print_help()
@@ -123,8 +146,12 @@ def main(args=None):
             search_result = db.search(parsed_args.language, parsed_args.keywords)
             t2 = datetime.now()
 
-            view = SearchResultView((t2 - t1).total_seconds())
-            view.print_search_result(search_result, parsed_args.keywords, alfred_format=parsed_args.alfred)
+            view = SearchResultView(
+                    (t2 - t1).total_seconds(), 
+                    alfred_format=parsed_args.alfred, 
+                    alfred_v3=parsed_args.alfred3)
+
+            view.print_search_result(search_result, parsed_args.keywords)
 
         except EmptyIndexWarning:
             print(Fore.RED + 'Empty index.' + Fore.RESET)

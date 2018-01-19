@@ -4,56 +4,65 @@ from builtins import *
 from xml.sax.saxutils import escape
 from colorama import Fore, Back, Style
 
+import json
 import re
 
 
 class SearchResultView(object):
 
-    def __init__(self, time_consumed):
+    def __init__(self, time_consumed, alfred_format=False, alfred_v3=False):
         self.time_consumed = time_consumed
-    
-    def print_search_result(self, search_result, keywords=None, alfred_format=False):
+        self.alfred_format = alfred_format
+        self.alfred_v3 = alfred_v3
+
+    def print_search_result(self, search_result, keywords=None):
             
-        if alfred_format:
-            """
-<?xml version="1.0"?>
-<items>
-<item uid="desktop" arg="~/Desktop" valid="YES" autocomplete="Desktop" type="file">
-    <title>Desktop</title>
-    <subtitle>~/Desktop</subtitle>
-    <icon type="fileicon">~/Desktop</icon>
-</item>
-</items>
-            """
-            print(u"<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
-            print(u"<items>")
+        if self.alfred_format:
+            results = []
             count = 0
+            
             for repo in search_result:
                 count += 1
                 if count == 1:
                     continue
-
+                    
                 full_name = repo.get('full_name')
                 url = repo.get('url')
                 language = repo.get('language')
                 description = repo.get('description')
+                if self.alfred_v3:
+                    results.append({
+                        "title": full_name,
+                        "subtitle": '%s [%s]' % (description, 
+                            language if language else ''),
+                        "arg": url,
+                    })
 
-                print(u"\t<item uid=\"{}\" arg=\"{}\">".format("", url))
-                print(u"\t\t<title>{}</title>".format(escape(full_name)))
-
-                if description:
-                    print(u"<subtitle>", end='')
-                    print(escape(description), end=' ')
-                    if language:
-                        print(language, end='')
-                    print(u"</subtitle>")
-                # print(u"\t\t<icon type=\"fileicon\">GitHub.png</icon>")
-                print(u"\t</item>")
+                else:  # legacy xml format for v2
+                    results.append('<item uid="" arg="{}"'.format(url))
+                    results.append('<title>{}</title>'.format(escape(full_name)))
+                    if description:
+                        results.append('<subtitle>{} {}</subtitle>'.format(
+                            escape(description),
+                            escape(language) if language else ''
+                        ))
+                    results.append('</item>')
 
                 if count >= 10:
                     break
 
-            print(u"</items>")
+            if self.alfred_v3:
+                alfred_output = json.dumps({
+                    "items": results
+                })
+            else:  # legacy xml format for v2
+                results.insert(0, '<?xml version="1.0" encoding="UTF-8"?>')
+                results.insert(0, '<items>')
+                results.append('</items>')
+                alfred_output = '\n'.join(results)
+
+            print(alfred_output)
+
         else:
             count = 0
             total = 0
