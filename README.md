@@ -56,6 +56,23 @@ optional arguments:
 - Replace kc with [TinyDB](https://github.com/msiemens/tinydb), no more non-python dependencies.
 - Only update stars since last time.
 
+##### Configuration
+You can avoid entering your GitHub API credentials every time you update the index, by adding them to the ``~/.netrc`` file as follows:
+
+```ini
+machine api.github.com
+    login ‹GH_USERNAME›
+    password ‹GH_API:TOKEN›
+```
+Use an API token as the password – you can create one via *Settings » Developer settings » Personal access tokens* in the GitHub web interface.
+
+Once you have stored credentials, you can also automate the index update by adding a job with ``crontab -e``:
+
+```sh
+# GitHub stars
+0 6 * * *	~/.local/bin/mystars -u
+```
+
 ##### Installation (Mac OSX)
 ```
 $ pip install oh-my-stars --upgrade
