@@ -62,7 +62,7 @@ You can avoid entering your GitHub API credentials every time you update the ind
 ```ini
 machine api.github.com
     login ‹GH_USERNAME›
-    password ‹GH_API:TOKEN›
+    password ‹GH_API_TOKEN›
 ```
 Use an API token as the password – you can create one via *Settings » Developer settings » Personal access tokens* in the GitHub web interface.
 
