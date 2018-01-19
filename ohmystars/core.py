@@ -119,15 +119,17 @@ def main(args=None):
     if parsed_args.install:
 
         filename = 'ohmystars-v{}.alfredworkflow'.format(
-            '3' if parsed_args.alfred_v3 else '2'
+            '3' if parsed_args.alfred3 else '2'
         )
 
         ret = subprocess.call(' '.join([
             
             'curl -s -o /tmp/{}'.format(filename),
 
+            '-H "Accept:application/octet-stream"',
+
             '"{url}{filename}"'.format(
-                url='https://github.com/wolfg1969/oh-my-stars/blob/master/',
+                url='https://raw.githubusercontent.com/wolfg1969/oh-my-stars/master/',
                 filename=filename
             ),
 

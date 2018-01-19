@@ -28,7 +28,7 @@ optional arguments:
 
 ![oh-my-stars-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars-alfred-workflow.png)
 
-##### v1.3.3
+##### v1.3.5
 - Output Alfred 3 JSON ouput with "-a -3" option.
 - Import Alfred Workflow with "-i" (append "-3" for Alfred 3) option.
 
