@@ -3,7 +3,7 @@
 Search your stars locally.
 
 ```
-usage: __main__.py [-h] [-l LANGUAGE [LANGUAGE ...]] [-u] [-r] [-a] [-3] [-i]
+usage: mystars [-h] [-l LANGUAGE [LANGUAGE ...]] [-u] [-r] [-a] [-3] [-i]
                    [-v]
                    [keywords [keywords ...]]
 
@@ -47,7 +47,7 @@ Once you have stored credentials, you can also automate the index update by addi
 ```
 
 ### Installation (Mac OSX)
-```
+```sh
 $ pip install oh-my-stars --upgrade --user
 $ mystars --help
 $ mystars --update
@@ -57,18 +57,18 @@ $ mystars awesome python
 ``` 
 
 if install failed, try following commands
-```
+```sh
 $ pip uninstall distribute
 $ pip install setuptools
 $ pip install --upgrade setuptools
 ```
 
 ### Integration with Alfred
-```
+```sh
 $ mystars --install -3
 ```
 or for Alfred v2.x
-```
+```sh
 $ mystars --install
 ```
 
