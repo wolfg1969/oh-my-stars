@@ -39,7 +39,7 @@ class SearchResultView(object):
                     })
 
                 else:  # legacy xml format for v2
-                    results.append('<item uid="" arg="{}"'.format(url))
+                    results.append('<item uid="" arg="{}">'.format(url))
                     results.append('<title>{}</title>'.format(escape(full_name)))
                     if description:
                         results.append('<subtitle>{} {}</subtitle>'.format(
