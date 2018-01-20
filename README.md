@@ -24,9 +24,56 @@ optional arguments:
   -v, --version         show program's version number and exit
 ```
 
+![oh-my-stars](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars.png)
 ##### Works with Alfred Workflow
 
 ![oh-my-stars-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars-alfred-workflow.png)
+
+### Configuration
+You can avoid entering your GitHub API credentials every time you update the index, by adding them to the ``~/.netrc`` file as follows:
+
+```ini
+machine api.github.com
+    login ‹GH_USERNAME›
+    password ‹GH_API_TOKEN›
+```
+Use an API token as the password – you can create one via *Settings » Developer settings » Personal access tokens* in the GitHub web interface.
+
+Once you have stored credentials, you can also automate the index update by adding a job with ``crontab -e``:
+
+```sh
+# GitHub stars
+0 6 * * *	~/.local/bin/mystars -u
+```
+
+### Installation (Mac OSX)
+```
+$ pip install oh-my-stars --upgrade --user
+$ mystars --help
+$ mystars --update
+$ mystars angular upload
+$ mystars --language python
+$ mystars awesome python
+``` 
+
+if install failed, try following commands
+```
+$ pip uninstall distribute
+$ pip install setuptools
+$ pip install --upgrade setuptools
+```
+
+### Integration with Alfred
+```
+$ mystars --install -3
+```
+or for Alfred v2.x
+```
+$ mystars --install
+```
+
+### Change logs
+
 ##### v1.4.5
 - Drop Python 2.6 Support
 - Update docs: using ~/.netrc + cron. @jhermann
@@ -58,49 +105,3 @@ optional arguments:
 
 - Replace kc with [TinyDB](https://github.com/msiemens/tinydb), no more non-python dependencies.
 - Only update stars since last time.
-
-##### Configuration
-You can avoid entering your GitHub API credentials every time you update the index, by adding them to the ``~/.netrc`` file as follows:
-
-```ini
-machine api.github.com
-    login ‹GH_USERNAME›
-    password ‹GH_API_TOKEN›
-```
-Use an API token as the password – you can create one via *Settings » Developer settings » Personal access tokens* in the GitHub web interface.
-
-Once you have stored credentials, you can also automate the index update by adding a job with ``crontab -e``:
-
-```sh
-# GitHub stars
-0 6 * * *	~/.local/bin/mystars -u
-```
-
-##### Installation (Mac OSX)
-```
-$ pip install oh-my-stars --upgrade --user
-$ mystars --help
-$ mystars --update
-$ mystars angular upload
-$ mystars --language python
-$ mystars awesome python
-``` 
-
-if install failed, try following commands
-```
-$ pip uninstall distribute
-$ pip install setuptools
-$ pip install --upgrade setuptools
-```
-
-##### Integration with Alfred
-```
-$ mystars --install -3
-```
-or
-```
-$ mystars --install
-```
-for Alfred v2.x
-
-![oh-my-stars](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars.png)
