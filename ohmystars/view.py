@@ -12,7 +12,7 @@ class SearchResultView(object):
 
     def __init__(self, time_consumed, alfred_format=False, alfred_v3=False):
         self.time_consumed = time_consumed
-        self.alfred_format = alfred_format
+        self.alfred_format = alfred_format or alfred_v3
         self.alfred_v3 = alfred_v3
 
     def print_search_result(self, search_result, keywords=None):

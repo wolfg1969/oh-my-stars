@@ -53,7 +53,7 @@ def main(args=None):
                         help='Create(first time) or update the local stars index')
     parser.add_argument('-r', '--reindex', action='store_true', help='Re-create the local stars index')
     parser.add_argument('-a', '--alfred', action='store_true', help='Format search result as Alfred XML')
-    parser.add_argument('-3', '--alfred3', action='store_true', help='Alfred 3 support')
+    parser.add_argument('-3', '--three', action='store_true', help='Format search result as Alfred 3 JSON')
     parser.add_argument('-i', '--install', action='store_true', help='Import Alfred workflow')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     
@@ -118,9 +118,7 @@ def main(args=None):
 
     if parsed_args.install:
 
-        filename = 'ohmystars-v{}.alfredworkflow'.format(
-            '3' if parsed_args.alfred3 else '2'
-        )
+        filename = 'ohmystars.alfredworkflow'
 
         ret = subprocess.call(' '.join([
             
@@ -151,7 +149,7 @@ def main(args=None):
             view = SearchResultView(
                     (t2 - t1).total_seconds(), 
                     alfred_format=parsed_args.alfred, 
-                    alfred_v3=parsed_args.alfred3)
+                    alfred_v3=parsed_args.three)
 
             view.print_search_result(search_result, parsed_args.keywords)
 
