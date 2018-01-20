@@ -19,7 +19,7 @@ optional arguments:
   -u, --update          Create(first time) or update the local stars index
   -r, --reindex         Re-create the local stars index
   -a, --alfred          Format search result as Alfred XML
-  -3, --alfred3
+  -3, --alfred3         Alfred 3 support
   -i, --install         Import Alfred workflow
   -v, --version         show program's version number and exit
 ```
@@ -27,6 +27,9 @@ optional arguments:
 ##### Works with Alfred Workflow
 
 ![oh-my-stars-alfred-workflow](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars-alfred-workflow.png)
+##### v1.4.5
+- Drop Python 2.6 Support
+- Update docs: using ~/.netrc + cron. @jhermann
 
 ##### v1.3.5
 - Output Alfred 3 JSON ouput with "-a -3" option.
@@ -75,7 +78,7 @@ Once you have stored credentials, you can also automate the index update by addi
 
 ##### Installation (Mac OSX)
 ```
-$ pip install oh-my-stars --upgrade
+$ pip install oh-my-stars --upgrade --user
 $ mystars --help
 $ mystars --update
 $ mystars angular upload
@@ -89,5 +92,15 @@ $ pip uninstall distribute
 $ pip install setuptools
 $ pip install --upgrade setuptools
 ```
+
+##### Integration with Alfred
+```
+$ mystars --install -3
+```
+or
+```
+$ mystars --install
+```
+for Alfred v2.x
 
 ![oh-my-stars](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars.png)

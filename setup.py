@@ -29,8 +29,7 @@ if 'bdist_wheel' not in sys.argv:
 # bdist_wheel
 extras_require = {
     # http://wheel.readthedocs.org/en/latest/#defining-conditional-dependencies
-    ':python_version == "2.6"'
-    ' or python_version == "3.0"'
+    ':python_version == "3.0"'
     ' or python_version == "3.1" ': ['argparse>=1.2.1'],
     ':sys_platform == "win32"': ['pyreadline'],
 }
@@ -54,7 +53,6 @@ setup(
         "Operating System :: OS Independent",
         'Environment :: Console',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
