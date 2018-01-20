@@ -157,3 +157,4 @@ def main(args=None):
 
         except EmptyIndexWarning:
             print(Fore.RED + 'Empty index.' + Fore.RESET)
+

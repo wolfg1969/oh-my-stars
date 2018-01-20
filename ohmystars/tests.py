@@ -24,3 +24,4 @@ class IndexTest(unittest.TestCase):
     def test_update_inverted_index_sorted(self):
         update_inverted_index(self.index, 'python', 3, 1, 2)
         self.assertEqual([1, 2, 3], self.index.get('python'))
+

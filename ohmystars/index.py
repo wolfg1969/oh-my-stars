@@ -31,3 +31,4 @@ def update_inverted_index(index, key, *items):
     existing = index.get(key, [])
     existing += items
     index[key] = list(set(sorted(existing)))
+

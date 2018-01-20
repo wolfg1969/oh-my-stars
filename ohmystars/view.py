@@ -56,9 +56,9 @@ class SearchResultView(object):
                     "items": results
                 })
             else:  # legacy xml format for v2
-                results.insert(0, '<?xml version="1.0" encoding="UTF-8"?>')
-                results.insert(0, '<items>')
                 results.append('</items>')
+                results.insert(0, '<items>')
+                results.insert(0, '<?xml version="1.0" encoding="UTF-8"?>')
                 alfred_output = '\n'.join(results)
 
             print(alfred_output)

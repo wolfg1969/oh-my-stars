@@ -121,3 +121,4 @@ class StarredDB(object):
         yield len(search_results)
         for doc_id in search_results:
             yield self._db.get(doc_id=doc_id)
+
