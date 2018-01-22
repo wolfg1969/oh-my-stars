@@ -18,8 +18,8 @@ optional arguments:
                         Filter by language
   -u, --update          Create(first time) or update the local stars index
   -r, --reindex         Re-create the local stars index
-  -a, --alfred          Format search result as Alfred XML
-  -3, --three           Format search result as Alfred 3 JSON
+  -a, --alfred          Format search result as Alfred Script Filter output
+  -3, --three           Alfred 3 support
   -i, --install         Import Alfred workflow
   -v, --version         show program's version number and exit
 ```
@@ -65,10 +65,17 @@ $ pip install --upgrade setuptools
 
 ### Integration with Alfred
 ```sh
-$ mystars --install
+$ mystars -i -3
+```
+For Alfred v2
+```sh
+$ mystars -i
 ```
 
 ### Change logs
+
+##### v1.4.9
+- Fix workflow for Alfred v2
 
 ##### v1.4.8
 - Fix Alfred XML output

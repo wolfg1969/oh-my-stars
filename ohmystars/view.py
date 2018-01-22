@@ -30,6 +30,7 @@ class SearchResultView(object):
                 url = repo.get('url')
                 language = repo.get('language')
                 description = repo.get('description')
+
                 if self.alfred_v3:
                     results.append({
                         "title": full_name,

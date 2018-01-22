@@ -52,8 +52,8 @@ def main(args=None):
     parser.add_argument('-u', '--update', action='store_true',
                         help='Create(first time) or update the local stars index')
     parser.add_argument('-r', '--reindex', action='store_true', help='Re-create the local stars index')
-    parser.add_argument('-a', '--alfred', action='store_true', help='Format search result as Alfred XML')
-    parser.add_argument('-3', '--three', action='store_true', help='Format search result as Alfred 3 JSON')
+    parser.add_argument('-a', '--alfred', action='store_true', help='Format search result as Alfred Script Filter output')
+    parser.add_argument('-3', '--three', action='store_true', help='Alfred 3 support')
     parser.add_argument('-i', '--install', action='store_true', help='Import Alfred workflow')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     
@@ -118,7 +118,10 @@ def main(args=None):
 
     if parsed_args.install:
 
-        filename = 'ohmystars.alfredworkflow'
+        if parsed_args.three:
+            filename = 'ohmystars.alfredworkflow'
+        else:
+            filename = 'ohmystars-v2.alfredworkflow'
 
         ret = subprocess.call(' '.join([
             
