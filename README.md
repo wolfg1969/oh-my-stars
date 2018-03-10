@@ -78,6 +78,9 @@ $ mystars -i
 
 ### Change logs
 
+#### v1.5.1
+- Fix error 'IOError: [Errno 32] Broken pipe'
+
 ##### v1.5.0
 - Disable the pagination and add a --color option. Thanks for the suggestions from @jhermann
 - Speed up result display with CachingMiddleware of TinyDB

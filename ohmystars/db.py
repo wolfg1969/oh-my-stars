@@ -120,6 +120,10 @@ class StarredDB(object):
         # remove duplicates then sort by id
         search_results = sorted(list(set(search_results)), key=int)
 
-        yield len(search_results)
+        ret = []
+        ret.append(len(search_results))
+
         for doc_id in search_results:
-            yield self._db.get(doc_id=doc_id)
+            ret.append(self._db.get(doc_id=doc_id))
+
+        return ret
