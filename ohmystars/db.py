@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 from builtins import *
-from tinydb import TinyDB, Query, operations
+from tinydb import TinyDB, Query, operations, JSONStorage
 
 import os
+
+from tinydb.middlewares import CachingMiddleware
 
 from .index import update_inverted_index, split_keywords, split_repo_name, split_repo_desc
 
@@ -15,7 +17,7 @@ class EmptyIndexWarning(RuntimeWarning):
 class StarredDB(object):
 
     def __init__(self, my_stars_home, mode):
-        self._db = TinyDB(os.path.join(my_stars_home, 'mystars.db'))
+        self._db = TinyDB(os.path.join(my_stars_home, 'mystars.db'), storage=CachingMiddleware(JSONStorage))
 
         if mode == 't':
             self._db.purge_tables()
@@ -121,4 +123,3 @@ class StarredDB(object):
         yield len(search_results)
         for doc_id in search_results:
             yield self._db.get(doc_id=doc_id)
-

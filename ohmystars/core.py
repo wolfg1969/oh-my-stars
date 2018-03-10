@@ -56,6 +56,8 @@ def main(args=None):
     parser.add_argument('-3', '--three', action='store_true', help='Alfred 3 support')
     parser.add_argument('-i', '--install', action='store_true', help='Import Alfred workflow')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
+    parser.add_argument('-c', '--color', default='always', choices=['always', 'auto', 'never'], metavar='WHEN',
+                        help='Colorize the output; WHEN can be \'always\' (default if omitted), \'auto\', or \'never\'')
     
     parsed_args = parser.parse_args(args)
     
@@ -150,9 +152,11 @@ def main(args=None):
             t2 = datetime.now()
 
             view = SearchResultView(
-                    (t2 - t1).total_seconds(), 
-                    alfred_format=parsed_args.alfred, 
-                    alfred_v3=parsed_args.three)
+                (t2 - t1).total_seconds(),
+                alfred_format=parsed_args.alfred,
+                alfred_v3=parsed_args.three,
+                color_option=parsed_args.color
+            )
 
             view.print_search_result(search_result, parsed_args.keywords)
 

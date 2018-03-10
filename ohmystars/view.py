@@ -2,6 +2,8 @@
 from __future__ import (absolute_import, division, print_function, unicode_literals)
 from builtins import *
 from xml.sax.saxutils import escape
+
+import sys
 from colorama import Fore, Back, Style
 
 import json
@@ -10,10 +12,16 @@ import re
 
 class SearchResultView(object):
 
-    def __init__(self, time_consumed, alfred_format=False, alfred_v3=False):
+    def __init__(self, time_consumed, alfred_format=False, alfred_v3=False, color_option='always'):
+
         self.time_consumed = time_consumed
         self.alfred_format = alfred_format or alfred_v3
         self.alfred_v3 = alfred_v3
+
+        self.enable_color = False
+
+        if color_option == 'always' or (color_option == 'auto' and sys.stdout.isatty()):
+            self.enable_color = True
 
     def print_search_result(self, search_result, keywords=None):
             
@@ -66,7 +74,6 @@ class SearchResultView(object):
 
         else:
             count = 0
-            total = 0
             for repo in search_result:
 
                 count += 1
@@ -82,15 +89,8 @@ class SearchResultView(object):
                 self.print_repo_language(repo)
                 self.print_repo_description(repo, keywords)
 
-                if (count - 1) % 10 == 0:
-                    self._print('', end='\n')
-                    self._print('({} to {} of {})'.format(
-                        count - 10, count - 1, total), Fore.GREEN, end='\n')
-                    s = input('Press <Enter> key to continue... (\'q\' to quit)')
-                    if s == 'q':
-                        break
             if total > 10:
-                self.print_summary(total)
+               self.print_summary(total)
           
     def print_summary(self, count):
         self._print('', end='\n')
@@ -123,11 +123,14 @@ class SearchResultView(object):
             self._print(text, Fore.WHITE, end='\n')
         
     def _print(self, text='', fore_color=Fore.WHITE, end=' '):
-        print(fore_color + text, end='')
-        print(Fore.RESET + Back.RESET + Style.RESET_ALL, end=end)
+        if self.enable_color:
+            print(fore_color + text, end='')
+            print(Fore.RESET + Back.RESET + Style.RESET_ALL, end=end)
+        else:
+            print(text, end=end)
         
     def _highlight_keywords(self, text, keywords, fore_color=Fore.GREEN):
-        if keywords:
+        if keywords and self.enable_color:
             for keyword in keywords:
                 regex = re.compile(keyword, re.I | re.U | re.M)
                 color = fore_color + Back.RED + Style.BRIGHT
