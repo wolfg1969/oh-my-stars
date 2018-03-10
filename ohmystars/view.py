@@ -12,16 +12,13 @@ import re
 
 class SearchResultView(object):
 
-    def __init__(self, time_consumed, alfred_format=False, alfred_v3=False, color_option='always'):
+    def __init__(self, time_consumed, alfred_format=False, alfred_v3=False, enable_color=True):
 
         self.time_consumed = time_consumed
         self.alfred_format = alfred_format or alfred_v3
         self.alfred_v3 = alfred_v3
 
-        self.enable_color = False
-
-        if color_option == 'always' or (color_option == 'auto' and sys.stdout.isatty()):
-            self.enable_color = True
+        self.enable_color = enable_color
 
     def print_search_result(self, search_result, keywords=None):
             

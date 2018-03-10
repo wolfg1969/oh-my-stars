@@ -18,10 +18,14 @@ optional arguments:
                         Filter by language
   -u, --update          Create(first time) or update the local stars index
   -r, --reindex         Re-create the local stars index
+  -c WHEN, --color WHEN
+                        Colorize the output; WHEN can be 'always' (default if
+                        omitted), 'auto', or 'never'
   -a, --alfred          Format search result as Alfred Script Filter output
   -3, --three           Alfred 3 support
   -i, --install         Import Alfred workflow
   -v, --version         show program's version number and exit
+
 ```
 
 ![oh-my-stars](https://raw.github.com/wolfg1969/my-stars-pilot/master/oh-my-stars.png)
@@ -73,6 +77,10 @@ $ mystars -i
 ```
 
 ### Change logs
+
+##### v1.5.0
+- Disable the pagination and add a --color option. Thanks for the suggestions from @jhermann
+- Speed up result display with CachingMiddleware of TinyDB
 
 ##### v1.4.9
 - Fix workflow for Alfred v2

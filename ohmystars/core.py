@@ -41,6 +41,13 @@ def get_auth_from_netrc(hostname):
     return username, password
 
 
+def print_text(text, color=None, reset_color=True):
+    if color is not None:
+        print(color + text + Fore.RESET if reset_color else '')
+    else:
+        print(text)
+
+
 def main(args=None):
     
     if not os.path.exists(MY_STARS_HOME):
@@ -52,14 +59,17 @@ def main(args=None):
     parser.add_argument('-u', '--update', action='store_true',
                         help='Create(first time) or update the local stars index')
     parser.add_argument('-r', '--reindex', action='store_true', help='Re-create the local stars index')
-    parser.add_argument('-a', '--alfred', action='store_true', help='Format search result as Alfred Script Filter output')
+    parser.add_argument('-c', '--color', default='always', choices=['always', 'auto', 'never'], metavar='WHEN',
+                        help='Colorize the output; WHEN can be \'always\' (default if omitted), \'auto\', or \'never\'')
+    parser.add_argument('-a', '--alfred', action='store_true',
+                        help='Format search result as Alfred Script Filter output')
     parser.add_argument('-3', '--three', action='store_true', help='Alfred 3 support')
     parser.add_argument('-i', '--install', action='store_true', help='Import Alfred workflow')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-    parser.add_argument('-c', '--color', default='always', choices=['always', 'auto', 'never'], metavar='WHEN',
-                        help='Colorize the output; WHEN can be \'always\' (default if omitted), \'auto\', or \'never\'')
     
     parsed_args = parser.parse_args(args)
+
+    enable_color = parsed_args.color == 'always' or (parsed_args.color == 'auto' and sys.stdout.isatty())
     
     if parsed_args.update or parsed_args.reindex:
 
@@ -78,7 +88,7 @@ def main(args=None):
             password = getpass('GitHub password for {0}: '.format(user))
 
         if not password:
-            print(Fore.RED + 'password is required.')
+            print_text('password is required.', color=Fore.RED if enable_color else None, reset_color=False)
             sys.exit(1)
 
         def gh2f():
@@ -98,7 +108,8 @@ def main(args=None):
                 if db.get_latest_repo_full_name() == repo.full_name:
                     break
 
-                print(Fore.BLUE + repo.full_name + Fore.RESET)
+                print_text(repo.full_name, color=Fore.BLUE if enable_color else None)
+
                 repo_list.append({
                     'full_name': repo.full_name,
                     'name': repo.name,
@@ -108,13 +119,14 @@ def main(args=None):
                 })
             if repo_list:
                 t1 = datetime.now()
-                print(Fore.GREEN + 'Saving repo data...')
+                print_text('Saving repo data...', color=Fore.GREEN if enable_color else None, reset_color=False)
                 db.update(repo_list)
 
                 t2 = datetime.now()
-                print(Fore.RED + 'Done. ({:3.3}s)'.format((t2 - t1).total_seconds()) + Fore.RESET)
+                print_text('Done. ({:3.3}s)'.format((t2 - t1).total_seconds()),
+                           color=Fore.RED if enable_color else None)
             else:
-                print(Fore.RED + 'No new stars found.' + Fore.RESET)
+                print_text('No new stars found.', color=Fore.RED if enable_color else None)
 
         sys.exit(0)
 
@@ -155,7 +167,7 @@ def main(args=None):
                 (t2 - t1).total_seconds(),
                 alfred_format=parsed_args.alfred,
                 alfred_v3=parsed_args.three,
-                color_option=parsed_args.color
+                enable_color=enable_color
             )
 
             view.print_search_result(search_result, parsed_args.keywords)
