@@ -5,15 +5,15 @@
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
-            "implementation_version": "0",
+            "implementation_version": "3.6.3",
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "17.3.0",
+            "platform_release": "17.4.0",
             "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 17.3.0: Thu Nov  9 18:09:22 PST 2017; root:xnu-4570.31.3~1/RELEASE_X86_64",
-            "python_full_version": "2.7.10",
-            "python_version": "2.7",
+            "platform_version": "Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64",
+            "python_full_version": "3.6.3",
+            "python_version": "3.6",
             "sys_platform": "darwin"
         },
         "pipfile-spec": 6,
@@ -32,10 +32,10 @@
     "develop": {
         "certifi": {
             "hashes": [
-                "sha256:244be0d93b71e93fc0a0a479862051414d0e00e16435707e5bf5000f92e04694",
-                "sha256:5ec74291ca1136b40f0379e1128ff80e866597e4e2c1e755739a913bbc3613c0"
+                "sha256:14131608ad2fd56836d33a71ee60fa1c82bc9d2c8d98b7bdbc631fe1b3cd1296",
+                "sha256:edbc3f203427eef571f79a7692bb160a2b0f7ccaa31953e99bd17e307cf63f7d"
             ],
-            "version": "==2017.11.5"
+            "version": "==2018.1.18"
         },
         "chardet": {
             "hashes": [
@@ -73,10 +73,10 @@
         },
         "pkginfo": {
             "hashes": [
-                "sha256:31a49103180ae1518b65d3f4ce09c784e2bc54e338197668b4fb7dc539521024",
-                "sha256:bb1a6aeabfc898f5df124e7e00303a5b3ec9a489535f346bfbddb081af93f89e"
+                "sha256:a39076cb3eb34c333a0dd390b568e9e1e881c7bf2cc0aee12120636816f55aee",
+                "sha256:5878d542a4b3f237e359926384f1dde4e099c9f5525d236b1840cf704fa8d474"
             ],
-            "version": "==1.4.1"
+            "version": "==1.4.2"
         },
         "requests": {
             "hashes": [
@@ -100,17 +100,17 @@
         },
         "tqdm": {
             "hashes": [
-                "sha256:4c041f8019f7be65b8028ddde9a836f7ccc51c4637f1ff2ba9b5813d38d19d5a",
-                "sha256:df32e6f127dc0ccbc675eadb33f749abbcb8f174c5cb9ec49c0cdb73aa737377"
+                "sha256:782aa84b61a5246c4f9e5b938875009e0b759d9a5c9d16b12e4f8deefdff7892",
+                "sha256:eaf9c32a2cf7b9623eb272134b934eb354ef6304299611aa71e3cf47cf83c22b"
             ],
-            "version": "==4.19.5"
+            "version": "==4.19.9"
         },
         "twine": {
             "hashes": [
-                "sha256:d3ce5c480c22ccfb761cd358526e862b32546d2fe4bc93d46b5cf04ea3cc46ca",
-                "sha256:caa45b7987fc96321258cd7668e3be2ff34064f5c66d2d975b641adca659c1ab"
+                "sha256:08eb132bbaec40c6d25b358f546ec1dc96ebd2638a86eea68769d9e67fe2b129",
+                "sha256:2fd9a4d9ff0bcacf41fdc40c8cb0cfaef1f1859457c9653fd1b92237cc4e9f25"
             ],
-            "version": "==1.9.1"
+            "version": "==1.11.0"
         },
         "ujson": {
             "hashes": [

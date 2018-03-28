@@ -6,7 +6,7 @@ from datetime import datetime
 
 from colorama import Fore
 from getpass import getpass, getuser
-from netrc import netrc, NetrcParseError
+from netrc import netrc
 
 from github3 import login
 from .db import StarredDB, EmptyIndexWarning

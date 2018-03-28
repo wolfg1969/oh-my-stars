@@ -38,7 +38,7 @@ class StarredDB(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exception_type, exception_value, traceback):
         self._db.close()
 
     def _get_index_docs(self, name):
@@ -120,10 +120,4 @@ class StarredDB(object):
         # remove duplicates then sort by id
         search_results = sorted(list(set(search_results)), key=int)
 
-        ret = []
-        ret.append(len(search_results))
-
-        for doc_id in search_results:
-            ret.append(self._db.get(doc_id=doc_id))
-
-        return ret
+        return [self._db.get(doc_id=doc_id) for doc_id in search_results]
