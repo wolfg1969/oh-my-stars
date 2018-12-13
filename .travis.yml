@@ -5,8 +5,10 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 install:
-  - pip install -r requirements_dev.txt
+  - pip install pipenv
+  - pipenv install
 script:
   - python setup.py sdist bdist_wheel --universal
 branches:
