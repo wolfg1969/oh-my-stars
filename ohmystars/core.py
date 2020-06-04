@@ -123,7 +123,7 @@ def main(args=None):
                 db.update(repo_list)
 
                 t2 = datetime.now()
-                print_text('Done. ({:3.3}s)'.format((t2 - t1).total_seconds()),
+                print_text('Done. (took {:d}s)'.format((t2 - t1).total_seconds()),
                            color=Fore.RED if enable_color else None)
             else:
                 print_text('No new stars found.', color=Fore.RED if enable_color else None)
