@@ -47,7 +47,7 @@ Once you have stored credentials, you can also automate the index update by addi
 
 ```sh
 # GitHub stars
-0 6 * * *	~/.local/bin/mystars -u
+0 6 * * *	~/.local/bin/mystars -u >~/.oh-my-stars/update.log
 ```
 
 ### Installation (Mac OSX)
